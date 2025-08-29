@@ -1,0 +1,360 @@
+<script src="db.js"></script>
+<script src="script.js"></script>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <div id="splash">
+  <img src="logo.png" alt="App Icon">
+</div>
+
+<!-- WRAP your existing code in this container -->
+<div class="container" style="display:none;">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Local Search Engine</title>
+  <!-- SPLASH SCREEN -->
+
+  <style>
+    /* Splash Screen */
+#splash {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+  z-index: 9999;
+}
+#splash img {
+  width: 180px;
+  height: 180px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+#splash img:hover {
+  transform: scale(1.1);
+}
+
+    /* Body & background */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    /* Container */
+    .container {
+      width: 850px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      text-align: center;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    /* Logo */
+    #logo {
+      width: 540px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    /* Input & button */
+    input[type="text"] {
+      width: 70%;
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 12px;
+      border: 2px solid #2c3e50;
+      font-size: 16px;
+      outline: none;
+      transition: 0.3s;
+    }
+    input[type="text"]:focus {
+      border-color: #ff6b6b;
+      box-shadow: 0 0 10px rgba(255,107,107,0.3);
+    }
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(45deg, #ff6b6b, #f06595);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(45deg, #f06595, #ff6b6b);
+      transform: translateY(-2px);
+    }
+    #back-btn {
+      margin-bottom: 15px;
+      background: linear-gradient(45deg, #74c0fc, #4dabf7);
+    }
+    #back-btn:hover {
+      background: linear-gradient(45deg, #4dabf7, #74c0fc);
+    }
+    /* Results styling */
+    #results .card {
+      text-align: left;
+      margin: 15px 0;
+      padding: 15px;
+      background: linear-gradient(145deg, #ffe066, #ffd43b);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #results .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    #results a {
+      display: block;
+      color: #2c3e50;
+      text-decoration: none;
+      margin: 4px 0;
+      font-weight: bold;
+    }
+    #results a:hover {
+      text-decoration: underline;
+      color: #ff6b6b;
+    }
+    iframe {
+      margin-top: 10px;
+      border-radius: 12px;
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+    /* Available options list */
+    #available-options {
+      margin-top: 20px;
+      text-align: left;
+    }
+    #available-options h2 { color: #2c3e50; }
+    #options-list {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    #options-list li {
+      background: #f1f3f5;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .opt-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      cursor: pointer;
+      border: 1px solid #ddd;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 13px;
+    }
+    .chip:hover { border-color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo -->
+    <img id="logo" src="logo.png" alt="Local Search Engine">
+
+    <!-- Search Page -->
+    <div id="search-page">
+      <input type="text" id="query" placeholder="Enter keyword..." />
+      <button id="search-btn">🔍 Search</button>
+
+      <!-- Available Options -->
+      <div id="available-options">
+        <h2>Available Topics</h2>
+        <ul id="options-list"></ul>
+      </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="results-page" style="display:none;">
+      <button id="back-btn">⬅ Back</button>
+      <h2>Search Results</h2>
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <!-- Load external scripts AFTER the HTML to avoid timing issues -->
+  <script src="db.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // ---- FALLBACK DB (used if window.DB isn't provided by db.js) ----
+      const FALLBACK_DB = [
+        { keyword: "Python",     pdf: "python.pdf",   wiki: "https://en.wikipedia.org/wiki/Python_(programming_language)", yt1: "https://www.youtube.com/embed/_uQrJ0TkZlc", yt2: "https://www.youtube.com/embed/kqtD5dpn9C8" },
+        { keyword: "Java",       pdf: "java.pdf",     wiki: "https://en.wikipedia.org/wiki/Java_(programming_language)",   yt1: "https://www.youtube.com/embed/grEKMHGYyns",   yt2: "https://www.youtube.com/embed/eIrMbAQSU34" },
+        { keyword: "JavaScript", pdf: "javascript.pdf", wiki: "https://en.wikipedia.org/wiki/JavaScript",                 yt1: "https://www.youtube.com/embed/hdI2bqOjy3c",   yt2: "https://www.youtube.com/embed/W6NZfCO5SIk" },
+        { keyword: "Go",         pdf: "go.pdf",       wiki: "https://en.wikipedia.org/wiki/Go_(programming_language)",    yt1: "https://www.youtube.com/embed/YS4e4q9oBaU",   yt2: "https://www.youtube.com/embed/YS4e4q9oBaU" },
+        { keyword: "Rust",       pdf: "rust.pdf",     wiki: "https://en.wikipedia.org/wiki/Rust_(programming_language)",  yt1: "https://www.youtube.com/embed/zF34dRivLOw",   yt2: "https://www.youtube.com/embed/zF34dRivLOw" },
+        { keyword: ".NET",       pdf: "dotnet.pdf",   wiki: "https://en.wikipedia.org/wiki/.NET",                          yt1: "https://www.youtube.com/embed/gfkTfcpWqAY",   yt2: "https://www.youtube.com/embed/gfkTfcpWqAY" },
+        { keyword: "DSA",        pdf: "dsa.pdf",      wiki: "https://en.wikipedia.org/wiki/Data_structure",               yt1: "https://www.youtube.com/embed/8hly31xKli0",   yt2: "https://www.youtube.com/embed/bum_19loj9A" },
+        { keyword: "C++",        pdf: "cpp.pdf",      wiki: "https://en.wikipedia.org/wiki/C%2B%2B",                      yt1: "https://www.youtube.com/embed/2CppDwB1g6U",   yt2: "https://www.youtube.com/embed/vLnPwxZdW4Y" },
+        { keyword: "SQL",        pdf: "sql.pdf",      wiki: "https://en.wikipedia.org/wiki/SQL",                           yt1: "https://www.youtube.com/embed/7S_tz1z_5bA",   yt2: "https://www.youtube.com/embed/HXV3zeQKqGY" },
+        { keyword: "PHP",        pdf: "php.pdf",      wiki: "https://en.wikipedia.org/wiki/PHP",                           yt1: "https://www.youtube.com/embed/OK_JCtrrv-c",   yt2: "https://www.youtube.com/embed/OK_JCtrrv-c" },
+        { keyword: "Kotlin",     pdf: "kotlin.pdf",   wiki: "https://en.wikipedia.org/wiki/Kotlin_(programming_language)", yt1: "https://www.youtube.com/embed/F9UC9DY-vIU",   yt2: "https://www.youtube.com/embed/F9UC9DY-vIU" },
+        { keyword: "Swift",      pdf: "swift.pdf",    wiki: "https://en.wikipedia.org/wiki/Swift_(programming_language)",  yt1: "https://www.youtube.com/embed/comQ1-x2a1Q",   yt2: "https://www.youtube.com/embed/comQ1-x2a1Q" }
+      ];
+
+      // Prefer data from db.js (window.DB), else fallback to local list above
+      const DATA = (Array.isArray(window.DB) && window.DB.length) ? window.DB : FALLBACK_DB;
+
+      // Elements
+      const searchBtn   = document.getElementById("search-btn");
+      const queryInput  = document.getElementById("query");
+      const resultsDiv  = document.getElementById("results");
+      const searchPage  = document.getElementById("search-page");
+      const resultsPage = document.getElementById("results-page");
+      const backBtn     = document.getElementById("back-btn");
+      const optionsList = document.getElementById("options-list");
+
+      // Render Available Options
+      function renderOptions() {
+        optionsList.innerHTML = "";
+        DATA.forEach(item => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <strong>${item.keyword}</strong>
+            <div class="opt-actions">
+              <a href="${item.pdf}" target="_blank" rel="noopener">Open PDF</a>
+              <span class="chip" data-key="${item.keyword}">Search</span>
+            </div>
+          `;
+          optionsList.appendChild(li);
+        });
+
+        // Click on "Search" chip triggers search for that keyword
+        optionsList.querySelectorAll(".chip").forEach(chip => {
+          chip.addEventListener("click", (e) => {
+            const key = e.currentTarget.getAttribute("data-key");
+            queryInput.value = key;
+            doSearch(key);
+          });
+        });
+      }
+
+      // Build a result card safely
+      function buildCard(entry) {
+        const keyword = entry.keyword || entry.key || entry.title || "Result";
+        const pdf  = entry.pdf || entry.PDF;
+        const wiki = entry.wiki || entry.wikipedia || entry.gfg; // accept multiple possible keys
+        const ytList = [entry.yt, entry.yt1, entry.yt2, entry.youtube, entry.youtube1, entry.youtube2]
+                        .filter(Boolean);
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        let html = `<strong>${keyword}</strong><br>`;
+        if (pdf)  html += `<a href="${pdf}" target="_blank" rel="noopener">PDF</a><br>`;
+        if (wiki) html += `<a href="${wiki}" target="_blank" rel="noopener">Wikipedia (opens in new tab)</a><br>`;
+        // Do NOT iframe Wikipedia (blocked by X-Frame-Options). Only show YouTube iframes.
+        ytList.forEach(url => {
+          // Only embed if it looks like a proper embed URL
+          const safe = typeof url === "string" && url.includes("youtube.com/embed/");
+          if (safe) {
+            html += `
+              <iframe width="100%" height="350"
+                src="${url}"
+                title="${keyword} Video"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            `;
+          }
+        });
+
+        card.innerHTML = html;
+        return card;
+      }
+
+      // Show results helper
+      function showResults(list) {
+        resultsDiv.innerHTML = "";
+        if (!list || !list.length) {
+          resultsDiv.innerHTML = "<p>No results found.</p>";
+          return;
+        }
+        list.forEach(entry => resultsDiv.appendChild(buildCard(entry)));
+        searchPage.style.display = "none";
+        resultsPage.style.display = "block";
+      }
+
+      // Search function: tries server first; on error or empty, falls back to local filter
+      async function doSearch(q) {
+        const query = (q ?? queryInput.value).trim();
+        if (!query) {
+          alert("Please enter a keyword.");
+          return;
+        }
+        try {
+          const res = await fetch(`/search?query=${encodeURIComponent(query)}`);
+          const ok  = res.ok ? await res.json() : [];
+          // If server returns something use it, else fallback to local filter
+          const use = Array.isArray(ok) && ok.length ? ok
+            : DATA.filter(x => String(x.keyword).toLowerCase().includes(query.toLowerCase()));
+          showResults(use);
+        } catch (err) {
+          // Network or server error — fallback to local
+          const local = DATA.filter(x => String(x.keyword).toLowerCase().includes(query.toLowerCase()));
+          showResults(local);
+        }
+      }
+
+      // Wire up search button and Enter key
+      searchBtn.addEventListener("click", () => doSearch());
+      queryInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doSearch();
+      });
+
+      // Back button
+      backBtn.addEventListener("click", () => {
+        resultsPage.style.display = "none";
+        searchPage.style.display = "block";
+        resultsDiv.innerHTML = "";
+        // keep the query so they can tweak it if they want
+      });
+
+      // Initial render
+      renderOptions();
+    });
+  </script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const splash = document.getElementById("splash");
+    const container = document.querySelector(".container");
+
+    document.querySelector("#splash img").addEventListener("click", () => {
+      splash.style.display = "none";   // hide splash
+      container.style.display = "block"; // show app
+    });
+  });
+</script>
+
+</body>
+</div> <!-- end container -->
+
+</html>
