@@ -1,0 +1,12 @@
+Python|python.pdf|https://en.wikipedia.org/wiki/Python_(programming_language)|https://www.youtube.com/embed/_uQrJ0TkZlc|https://www.youtube.com/embed/kqtD5dpn9C8
+Java|java.pdf|https://en.wikipedia.org/wiki/Java_(programming_language)|https://www.youtube.com/embed/grEKMHGYyns|https://www.youtube.com/embed/eIrMbAQSU34
+JavaScript|javascript.pdf|https://en.wikipedia.org/wiki/JavaScript|https://www.youtube.com/embed/hdI2bqOjy3c|https://www.youtube.com/embed/W6NZfCO5SIk
+Go|go.pdf|https://en.wikipedia.org/wiki/Go_(programming_language)|https://www.youtube.com/embed/YS4e4q9oBaU|https://www.youtube.com/embed/YS4e4q9oBaU
+Rust|rust.pdf|https://en.wikipedia.org/wiki/Rust_(programming_language)|https://www.youtube.com/embed/zF34dRivLOw|https://www.youtube.com/embed/zF34dRivLOw
+.NET|dotnet.pdf|https://en.wikipedia.org/wiki/.NET|https://www.youtube.com/embed/gfkTfcpWqAY|https://www.youtube.com/embed/gfkTfcpWqAY
+DSA|dsa.pdf|https://en.wikipedia.org/wiki/Data_structure|https://www.youtube.com/embed/8hly31xKli0|https://www.youtube.com/embed/bum_19loj9A
+C++|cpp.pdf|https://en.wikipedia.org/wiki/C%2B%2B|https://www.youtube.com/embed/2CppDwB1g6U|https://www.youtube.com/embed/vLnPwxZdW4Y
+SQL|sql.pdf|https://en.wikipedia.org/wiki/SQL|https://www.youtube.com/embed/7S_tz1z_5bA|https://www.youtube.com/embed/HXV3zeQKqGY
+PHP|php.pdf|https://en.wikipedia.org/wiki/PHP|https://www.youtube.com/embed/OK_JCtrrv-c|https://www.youtube.com/embed/OK_JCtrrv-c
+Kotlin|kotlin.pdf|https://en.wikipedia.org/wiki/Kotlin_(programming_language)|https://www.youtube.com/embed/F9UC9DY-vIU|https://www.youtube.com/embed/F9UC9DY-vIU
+Swift|swift.pdf|https://en.wikipedia.org/wiki/Swift_(programming_language)|https://www.youtube.com/embed/comQ1-x2a1Q|https://www.youtube.com/embed/comQ1-x2a1Q
